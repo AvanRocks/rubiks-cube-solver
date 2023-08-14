@@ -25,16 +25,13 @@ std::ostream& operator<<(std::ostream& out, const Word &word) {
 struct PermPair {
 	Permutation perm;
 	Word word;
-	auto operator<=>(const PermPair &other) const { 
-		if (perm == other.perm) {
-			return strong_ordering::equal;
-		} else {
-			return word <=> other.word; 
-		}
-	}
-	// ignore word when comparing for equality
-	bool operator==(const PermPair &other) const { return perm == other.perm; }
+	auto operator<=>(const PermPair &other) const = default;
 };
+
+// compare the perm fields of two PermPairs 
+bool permsAreEqual(const PermPair &lhs, const PermPair &rhs) {
+	return lhs.perm == rhs.perm;
+}
 
 std::ostream& operator<<(std::ostream& out, const PermPair &pair) {
 	out << pair.perm << endl << pair.word;
@@ -103,7 +100,8 @@ vector<PermPair> addOneMove(const vector<PermPair> &permPairs) {
 	return ret;
 }
 
-// C.size(): 1,888,833
+// C.size(): 1,888,833 WRONG
+// C.size(): 621,649 CORRECT :)
 // generate C^0 U ... U C^N where C = singleMoves and N = maxLength
 vector<PermPair> genWords(int maxLength) {
 	// generate each C^k
@@ -113,7 +111,7 @@ vector<PermPair> genWords(int maxLength) {
 		vector<PermPair> next = addOneMove(C.back());
 		// erase duplicates
 		sort(next.begin(), next.end());
-		next.erase(unique(next.begin(), next.end()), next.end());
+		next.erase(unique(next.begin(), next.end(), permsAreEqual), next.end());
 		cout << "C" << i+1 << ".size(): " << next.size() << '\n';
 		C.emplace_back(next);
 	}
@@ -124,7 +122,7 @@ vector<PermPair> genWords(int maxLength) {
 		ret.insert(ret.end(), vec.begin(), vec.end());
 	}
 	sort(ret.begin(), ret.end());
-	ret.erase(unique(ret.begin(), ret.end()), ret.end());
+	ret.erase(unique(ret.begin(), ret.end(), permsAreEqual), ret.end());
 	cout << "C.size(): " << ret.size() << '\n';
 
 	return ret;
