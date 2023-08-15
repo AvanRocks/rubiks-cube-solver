@@ -86,17 +86,19 @@ const vector<PermPair> singleMoves {
 // given A, generate A * C where C = singleMoves
 vector<PermPair> addOneMove(const vector<PermPair> &permPairs) {
 	vector<PermPair> ret;
-	for (auto [perm1, word1] : permPairs) {
-		for (auto [perm2, word2] : singleMoves) {
+	for (auto const &[perm1, word1] : permPairs) {
+		for (auto const &[perm2, word2] : singleMoves) {
 			// append word1 to word2
-			word2.insert(
-					word2.end(), 
-					make_move_iterator(word1.begin()),
-					make_move_iterator(word1.end())
-				);
-			ret.emplace_back(perm1 * perm2, word2);
+			Word word {word2};
+			for (auto const &move : word1) {
+				word.emplace_back(move);
+			}
+			ret.emplace_back(perm1 * perm2, word);
 		}
 	}
+	// erase duplicates
+	sort(ret.begin(), ret.end());
+	ret.erase(unique(ret.begin(), ret.end(), permsAreEqual), ret.end());
 	return ret;
 }
 
@@ -108,12 +110,8 @@ vector<PermPair> genWords(int maxLength) {
 	vector<PermPair> C0 {{id, {}}}; // identity permutation
 	vector<vector<PermPair>> C = {C0};
 	for (int i = 0; i < maxLength; i++) {
-		vector<PermPair> next = addOneMove(C.back());
-		// erase duplicates
-		sort(next.begin(), next.end());
-		next.erase(unique(next.begin(), next.end(), permsAreEqual), next.end());
-		cout << "C" << i+1 << ".size(): " << next.size() << '\n';
-		C.emplace_back(next);
+		C.emplace_back(addOneMove(C.back()));
+		cout << "C" << i+1 << ".size(): " << C.back().size() << '\n';
 	}
 
 	// take the union of each C^k
