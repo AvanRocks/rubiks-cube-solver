@@ -25,6 +25,9 @@ Permutation::Permutation(vector<idx> perm) : perm{perm} {
 }
 
 Permutation Permutation::operator*(const Permutation &other) const {
+	Permutation tmp(*this);
+	return tmp *= other;
+	/*
 	if (perm.size() != other.perm.size()) {
 		throw invalid_argument("Cannot compose permutations of different lengths. this.size(): " + to_string(perm.size()) + ", other.perm.size(): " + to_string(other.perm.size()) + ".");
 	}
@@ -33,7 +36,22 @@ Permutation Permutation::operator*(const Permutation &other) const {
 		newPerm[i] = perm[other.perm[i]-1];
 	}
 	return Permutation{newPerm};
+	*/
 }
+
+Permutation &Permutation::operator*=(const Permutation &other) {
+	if (perm.size() != other.perm.size()) {
+		throw invalid_argument("Cannot compose permutations of different lengths. this.size(): " + to_string(perm.size()) + ", other.perm.size(): " + to_string(other.perm.size()) + ".");
+	}
+	vector<idx> newPerm(perm.size());
+	for (size_t i = 0; i < perm.size(); i++) {
+		newPerm[i] = perm[other.perm[i]-1];
+	}
+	perm = newPerm;
+	return *this;
+}
+
+const idx& Permutation::operator[](std::size_t idx) const { return perm[idx]; }
 
 std::ostream& operator<<(ostream& out, const Permutation &perm) {
 	copy(perm.perm.begin(), perm.perm.end(), ostream_iterator<int>(out, " "));
@@ -48,4 +66,9 @@ Permutation Permutation::getInverse() const {
 	return {inverse};
 }
 
-std::vector<idx> Permutation::getPerm() const { return perm; }
+const vector<idx> &Permutation::getPerm() const { return perm; }
+
+const size_t Permutation::size() const { return perm.size(); }
+
+vector<idx>::const_iterator Permutation::begin() const { return perm.begin(); }
+vector<idx>::const_iterator Permutation::end() const { return perm.end(); }
