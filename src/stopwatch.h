@@ -10,12 +10,17 @@ namespace stopwatch {
 }
 
 #define startStopwatch(desc) \
-	std::cout << desc << " ... " << std::flush; \
-	stopwatch::start = std::chrono::high_resolution_clock::now();
+  { \
+		std::cout << desc << " ... " << std::flush; \
+		stopwatch::start = std::chrono::high_resolution_clock::now(); \
+	}
+	
 
 #define endStopwatch() \
-	stopwatch::end = std::chrono::high_resolution_clock::now(); \
-	stopwatch::milli = std::chrono::duration_cast<std::chrono::milliseconds>(stopwatch::end - stopwatch::start); \
-	std::cout << "DONE (time: " << stopwatch::milli << ")" << std::endl;
+	{ \
+		stopwatch::end = std::chrono::high_resolution_clock::now(); \
+		stopwatch::milli = std::chrono::duration_cast<std::chrono::milliseconds>(stopwatch::end - stopwatch::start); \
+		std::cout << "DONE (time: " << stopwatch::milli << ")" << std::endl; \
+	}
 
 #endif

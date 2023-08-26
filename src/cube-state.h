@@ -71,6 +71,8 @@ const std::vector<PermPair> singleMoves {
 		{D2}},
 };
 
+Permutation getPermutation(Word word);
+
 PermPair moveListToPermPair(std::vector<std::string> moves);
 
 Word inverse(Word word);

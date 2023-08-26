@@ -21,6 +21,11 @@ void PermutationTrie::insert(const PermPair &permPair) {
 	for (size_t i = 0; i < perm.size(); i++) {
 		// find next child
 		if (curr->isLeaf) {
+			// trying to insert a permutation which already exists
+			if (curr->permPair->perm == perm) {
+				return;
+			}
+
 			// we have encountered a compressed node, decompress it by one level
 
 			if (!prev) { // can only happen if head is a leaf
@@ -56,7 +61,7 @@ void PermutationTrie::insert(const PermPair &permPair) {
 			// child not found
 			// in this case, always insert a leaf node (we are compressing the trie)
 			unique_ptr<Node> leaf = make_unique<Node>(true, 
-																								make_unique<PermPair>(permPair), 
+																								make_unique<PermPair>(permPair),
 																								vector<pair<idx,unique_ptr<Node>>>() // empty vector
 																							 );
 			curr->children.emplace_back(perm[i], move(leaf));

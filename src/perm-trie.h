@@ -25,6 +25,7 @@ class PermutationTrie {
 	};
 
 	std::unique_ptr<Node> head;
+
 	// returns the permutation r in the subtrie starting at start such that s * r 
 	// is lexicographically least
 	const PermPair *min(const Permutation &s, Node *start) const;

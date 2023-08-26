@@ -1,8 +1,11 @@
 #include "product-stream.h"
 using namespace std;
 
-ProductStream::ProductStream(const vector<PermPair> &A, const PermutationTrie &B) : A{A}, B{B} {
-	// init priority queue
+ProductStream::ProductStream(const vector<PermPair> &A,
+														 PermutationTrie &&Btmp)
+	: A{A}, B{move(Btmp)} 
+{
+	// init set
 	// for each a in A, add a * B.min(a) to the queue
 	for (const auto &pairA : A) {
 		const PermPair *pairPtrB = B.min(pairA.perm);
@@ -11,18 +14,18 @@ ProductStream::ProductStream(const vector<PermPair> &A, const PermutationTrie &B
 			Word abWord {pairB.word};
 			abWord.insert(abWord.end(), pairA.word.begin(), pairA.word.end());
 			const PermPair ab {pairA.perm * pairB.perm, abWord};
-			queue.emplace(ab, pairA, pairB);
+			set.insert({ab, pairA, pairB});
 		}
 	}
 }
 
 PermPair *ProductStream::getNext() {
-	if (queue.empty()) {
+	if (set.empty()) {
 		return nullptr;
 	} else {
 		PermPair a,b,ab;
-		tie(ab,a,b) = queue.top();
-		queue.pop();
+		tie(ab,a,b) = *set.begin();
+		set.erase(set.begin());
 
 		const PermPair *nextBPtr = B.next(a.perm, b.perm);
 		if (nextBPtr) {
@@ -30,7 +33,7 @@ PermPair *ProductStream::getNext() {
 			Word newABWord {nextB.word};
 			newABWord.insert(newABWord.end(), a.word.begin(), a.word.end());
 			const PermPair newAB {a.perm * nextB.perm, newABWord};
-			queue.emplace(newAB, a, nextB);
+			set.insert({newAB, a, nextB});
 		}
 
 		return new PermPair{ab};

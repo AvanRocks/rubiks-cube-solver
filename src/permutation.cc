@@ -1,6 +1,7 @@
 #include "permutation.h"
 #include <stdexcept>
 #include <iterator>
+#include <numeric>
 using namespace std;
 
 Permutation::Permutation() {}
@@ -72,3 +73,9 @@ const size_t Permutation::size() const { return perm.size(); }
 
 vector<idx>::const_iterator Permutation::begin() const { return perm.begin(); }
 vector<idx>::const_iterator Permutation::end() const { return perm.end(); }
+
+Permutation Permutation::getIdentity(size_t size) {
+	vector<idx> id (size);
+	iota(id.begin(), id.end(), 1);
+	return Permutation{id};
+}

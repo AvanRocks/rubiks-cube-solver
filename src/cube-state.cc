@@ -65,6 +65,19 @@ Permutation getPermutation(Move move) {
 	throw invalid_argument("Unrecognized move provided.");
 }
 
+Permutation getPermutation(Word word) {
+	if (!word.size()) {
+		throw invalid_argument("Expected non-empty word.");
+	}
+
+	Permutation perm {getPermutation(word[0])};
+	for (size_t i = 1; i < word.size(); i++) {
+		perm = getPermutation(word[i]) * perm;
+	}
+
+	return perm;
+}
+
 PermPair moveListToPermPair(vector<string> moves) {
 	Word word;
 	for (string s : moves) {
@@ -77,10 +90,7 @@ PermPair moveListToPermPair(vector<string> moves) {
 	if (!word.size()) {
 		throw invalid_argument("Expected non-empty move list.");
 	}
-	Permutation perm {getPermutation(word[0])};
-	for (size_t i = 1; i < word.size(); i++) {
-		perm *= getPermutation(word[i]);
-	}
+	Permutation perm {getPermutation(word)};
 	
 	return {perm, word};
 }

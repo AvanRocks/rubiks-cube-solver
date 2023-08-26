@@ -21,6 +21,7 @@ public:
 	const size_t size() const;
 	std::vector<idx>::const_iterator begin() const;
 	std::vector<idx>::const_iterator end() const;
+	static Permutation getIdentity(size_t size);
 };
 
 

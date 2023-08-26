@@ -1,61 +1,60 @@
 #include <iostream>
+#include <algorithm>
+#include <numeric>
+#include <random>
 #include "cube-solver.h"
-#include "perm-trie.h"
 using namespace std;
 
+static Permutation id = Permutation::getIdentity(48);
+int cnt = 0;
+//random_device rd;
+//mt19937 rng(rd());
+mt19937 rng;
+
+// go through all scrambles in random order
+void genScrambles(size_t size, Word &word) {
+	if (word.size() == size) {
+		Permutation expectedSolution = getPermutation(word);
+		Permutation scramble = expectedSolution.getInverse();
+		cout << "Scramble: " << word << endl;
+		Word solutionWord = solve3By3(scramble, size, false);
+		Permutation solution;
+		if (solutionWord.size() == 0) {
+			solution = id;
+		} else {
+			solution = getPermutation(solutionWord);
+		}
+		if (scramble * solution != id) {
+			throw runtime_error("bruh");
+		}
+		cnt++;
+		if (cnt % 1'000 == 0) {
+			cout << "Checked " << cnt << " scrambles." << endl;
+		}
+	} else {
+		vector<idx> vec(18);
+		iota(vec.begin(), vec.end(), 0);
+		shuffle(vec.begin(), vec.end(), rng);
+		for (idx i = 0; i < 18; i++) {
+			word.emplace_back((Move)vec[i]);
+			genScrambles(size, word);
+			word.pop_back();
+		}
+	}
+}
+
+void testAllScrambles(int size) {
+	Word word;
+	genScrambles(size, word);
+}
+
 int main() {
-	//Permutation scramble = singleMoves[0].perm * singleMoves[1].perm * singleMoves[2].perm * singleMoves[3].perm;
 
-	//PermPair scramblePair = moveListToPermPair({"F"});
-	//PermPair scramblePair = moveListToPermPair({"F", "R", "U'"});
-	//Permutation &scramble = scramblePair.perm;
-
-	Permutation scramble {{43,44,41,20,47,11,28,9,24,13,17,42,36,40,37,25,6,21,1,29,7,19,10,3,35,39,22,18,34,33,31,48,16,15,30,2,23,32,26,46,8,4,27,12,45,14,5,38}};
-
-	solve3By3(scramble);
+	testAllScrambles(20);
 
 	/*
-	ofstream testWrite("test-file", ios::binary);
-
-	int x = 7;
-	testWrite.write(reinterpret_cast<const char*>(&x), sizeof(x));
-
-	vector<int> v {1, 2};
-	testWrite.write(reinterpret_cast<const char*>(v.data()), v.size() * sizeof(int));
-	testWrite.close();
-
-	ifstream testRead("test-file", ios::binary);
-	int y;
-	//y = testRead.get();
-	testRead.read(reinterpret_cast<char*>(&y), sizeof(y));
-	vector<int> w (v.size(), 0);
-	testRead.read(reinterpret_cast<char*>(w.data()), w.size() * sizeof(int));
-
-	cout << y << endl;
-	for (auto e : w) {
-		cout << e << ' ';
-	}
-	cout << endl;
-	*/
-
-	/*
-	 * PermutationTrie testing
-	vector<PermPair> permPairs {
-		{{{1,2,3,4,5}}, {}},
-		{{{1,2,3,5,4}}, {}},
-		{{{1,2,4,3,5}}, {}},
-		{{{1,2,5,3,4}}, {}},
-		{{{1,3,4,5,2}}, {}},
-		{{{2,4,1,3,5}}, {}},
-		{{{4,1,3,2,5}}, {}},
-		{{{4,1,3,5,2}}, {}},
-		{{{5,1,2,3,4}}, {}}
-	};
-	PermutationTrie trie {permPairs};
-	Permutation s {{3,1,4,2,5}};
-	for (const PermPair *permPair = trie.min(s); permPair != nullptr; permPair = trie.next(s, permPair->perm)) {
-		cout << permPair->perm << endl;
-	}
+	Permutation scramble = moveListToPermPair({{"U2","L'","D","L","U'","L'","U2","D'","R'","U","F","L'","U'","D","F","R","F2","L2","B2","U"}}).perm.getInverse();
+	solve3By3(scramble, 20);
 	*/
 
 	return 0;
