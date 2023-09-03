@@ -7,17 +7,17 @@ using namespace std;
 
 static Permutation id = Permutation::getIdentity(48);
 int cnt = 0;
-//random_device rd;
-//mt19937 rng(rd());
-mt19937 rng;
+random_device rd;
+mt19937 rng(rd());
+//mt19937 rng;
 
 // go through all scrambles in random order
 void genScrambles(size_t size, Word &word) {
 	if (word.size() == size) {
 		Permutation expectedSolution = getPermutation(word);
 		Permutation scramble = expectedSolution.getInverse();
-		cout << "Scramble: " << word << endl;
-		Word solutionWord = solve3By3(scramble, size, false);
+		//cout << "Scramble: " << word << endl;
+		Word solutionWord = solve3By3(scramble, size, true);
 		Permutation solution;
 		if (solutionWord.size() == 0) {
 			solution = id;
@@ -50,12 +50,12 @@ void testAllScrambles(int size) {
 
 int main() {
 
-	testAllScrambles(20);
-
 	/*
-	Permutation scramble = moveListToPermPair({{"U2","L'","D","L","U'","L'","U2","D'","R'","U","F","L'","U'","D","F","R","F2","L2","B2","U"}}).perm.getInverse();
-	solve3By3(scramble, 20);
+	testAllScrambles(4);
 	*/
+
+	Permutation scramble = moveListToPermPair({"U2","L'","D","L","U'","L'","U2","D'","R'","U","F","L'","U'","D","F","R","F2","L2","B2","U"}).perm.getInverse();
+	solve3By3(scramble, 20);
 
 	return 0;
 }

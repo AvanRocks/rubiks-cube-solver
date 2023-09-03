@@ -82,7 +82,7 @@ PermPair moveListToPermPair(vector<string> moves) {
 	Word word;
 	for (string s : moves) {
 		if (!stringToMove.count(s)) {
-			throw runtime_error("Illegal move list provided.");
+			throw runtime_error("Unrecognized move string: " + s);
 		}
 		word.emplace_back(stringToMove[s]);
 	}

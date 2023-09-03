@@ -176,25 +176,23 @@ Word findCommon(const Permutation &scramble,
 							 ProductStream &L3L4,
 							 bool quiet) 
 {
-	const PermPair *a = L2L1.getNext();
-	const PermPair *b = L3L4.getNext();
-
-	const PermPair *prevA = nullptr;
-	const PermPair *prevB = nullptr;
 
 	if (!quiet) {
 		startStopwatch("Finding common elements");
 		cout << endl;
 	}
+	const PermPair *a = L2L1.getNext();
+	const PermPair *b = L3L4.getNext();
+
 	int cnt = 0;
 	Word bestSolution;
 	int found = 0;
 	auto start = chrono::high_resolution_clock::now();
 
 	while (a && b) {
-		prevA = a; prevB = b;
 		const PermPair &permPairA = *a, &permPairB = *b;
-		if (permPairA.perm == permPairB.perm) {
+		auto comp = permPairA.perm <=> permPairB.perm;
+		if (comp == strong_ordering::equal) {
 			// found a solution
 
 			// scrambleWord is a word equivalent to the scramble permutation
@@ -213,16 +211,12 @@ Word findCommon(const Permutation &scramble,
 
 			a = L2L1.getNext();
 			b = L3L4.getNext();
-			if (a->perm == prevA->perm) cout << "the same a" << endl;
-			if (b->perm == prevB->perm) cout << "the same b" << endl;
 
 			//break;
-		} else if (permPairA.perm < permPairB.perm) {
+		} else if (comp == strong_ordering::less) {
 			a = L2L1.getNext();
-			if (a->perm == prevA->perm) cout << "the same a" << endl;
 		} else {
 			b = L3L4.getNext();
-			if (b->perm == prevB->perm) cout << "the same b" << endl;
 		}
 
 		cnt++;
@@ -241,8 +235,12 @@ Word findCommon(const Permutation &scramble,
 		if (cnt % 10'000'000 == 0) {
 			if (!quiet) cout << "The best solution so far is " << bestSolution << endl;
 		}
-
 	}
+	
+	if (found) {
+		if (!quiet) cout << "The best solution found is " << bestSolution << endl;
+	}
+
 	if (!quiet) endStopwatch();
 
 	if (found) {
@@ -250,12 +248,14 @@ Word findCommon(const Permutation &scramble,
 	} else {
 		throw invalid_argument("No solution found.");
 	}
+
 }
 
 // uses the same L2 to save time
 vector<Word> solve3By3s(const vector<Permutation> &scrambles, int maxSolSize, bool quiet) {
 	// cache L2 to use for every solve
 	const vector<PermPair> L2 {generateOrReadL2(ceil(maxSolSize/4.0), quiet)};
+	//copy(L2.begin(), L2.end(), ostream_iterator<PermPair>(cout, "\n"));
 
 	vector<Word> solutions;
 	for (const auto &scramble : scrambles) {
