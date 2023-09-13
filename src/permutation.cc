@@ -9,6 +9,9 @@ Permutation::Permutation() {}
 Permutation::Permutation(vector<idx> perm) : perm{perm} {
 	// check if permutation is valid
 	int n = perm.size();
+	if (n != 48) {
+		throw invalid_argument("permutation is not of size 48.");
+	}
 	vector<bool> exists(n+1, false);
 	for (int i = 0; i < n; i++) {
 		if (!(1 <= perm[i] && perm[i] <= n)) {
@@ -28,22 +31,14 @@ Permutation::Permutation(vector<idx> perm) : perm{perm} {
 Permutation Permutation::operator*(const Permutation &other) const {
 	Permutation tmp(*this);
 	return tmp *= other;
+}
+
+Permutation &Permutation::operator*=(const Permutation &other) {
 	/*
 	if (perm.size() != other.perm.size()) {
 		throw invalid_argument("Cannot compose permutations of different lengths. this.size(): " + to_string(perm.size()) + ", other.perm.size(): " + to_string(other.perm.size()) + ".");
 	}
-	vector<idx> newPerm(perm.size());
-	for (size_t i = 0; i < perm.size(); i++) {
-		newPerm[i] = perm[other.perm[i]-1];
-	}
-	return Permutation{newPerm};
 	*/
-}
-
-Permutation &Permutation::operator*=(const Permutation &other) {
-	if (perm.size() != other.perm.size()) {
-		throw invalid_argument("Cannot compose permutations of different lengths. this.size(): " + to_string(perm.size()) + ", other.perm.size(): " + to_string(other.perm.size()) + ".");
-	}
 	vector<idx> newPerm(perm.size());
 	for (size_t i = 0; i < perm.size(); i++) {
 		newPerm[i] = perm[other.perm[i]-1];

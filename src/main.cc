@@ -52,9 +52,11 @@ int main() {
 
 	/*
 	testAllScrambles(4);
+	return 0;
 	*/
 
 	Permutation scramble = moveListToPermPair({"U2","L'","D","L","U'","L'","U2","D'","R'","U","F","L'","U'","D","F","R","F2","L2","B2","U"}).perm.getInverse();
+
 	solve3By3(scramble, 20);
 
 	return 0;
