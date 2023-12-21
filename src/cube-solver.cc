@@ -266,8 +266,8 @@ vector<Word> solve3By3s(const vector<Permutation> &scrambles, int maxSolSize, bo
 	return solutions;
 }
 
-Word solve3By3(const Permutation &scramble, int maxSolSize, bool quiet) {
-	vector<Word> solutions = solve3By3s({scramble}, maxSolSize, quiet);
+Word solve3By3(const Permutation &inverseScramble, int maxSolSize, bool quiet) {
+	vector<Word> solutions = solve3By3s({inverseScramble}, maxSolSize, quiet);
 	if (solutions.size() != 1) {
 		throw runtime_error("bruh");
 	} else {

@@ -9,9 +9,8 @@ static Permutation id = Permutation::getIdentity(48);
 int cnt = 0;
 random_device rd;
 mt19937 rng(rd());
-//mt19937 rng;
 
-// go through all scrambles in random order
+// go through all scrambles in random order and test them
 void genScrambles(size_t size, Word &word) {
 	if (word.size() == size) {
 		Permutation expectedSolution = getPermutation(word);
@@ -51,13 +50,18 @@ void testAllScrambles(int size) {
 int main() {
 
 	/*
+	 * Uncomment to test all scrambles of size 4
 	testAllScrambles(4);
-	return 0;
 	*/
 
-	Permutation scramble = moveListToPermPair({"U2","L'","D","L","U'","L'","U2","D'","R'","U","F","L'","U'","D","F","R","F2","L2","B2","U"}).perm.getInverse();
+	// Edit the move list to change the scramble.
+	// Keep in mind that the longer the move list, the longer the program 
+	// will take to run.
+	auto scramble = moveListToPermPair({"U2", "L'", "D", "L", "U'"});
 
-	solve3By3(scramble, 20);
+	// solutions will be output to stdout
+	Permutation inverseScramble = scramble.perm.getInverse();
+	solve3By3(inverseScramble, 20);
 
 	return 0;
 }

@@ -8,6 +8,6 @@
 
 std::vector<Word> solve3By3s(const std::vector<Permutation> &scrambles, int maxSolSize, bool quiet = false);
 
-Word solve3By3(const Permutation &scramble, int maxSolSize, bool quiet = false);
+Word solve3By3(const Permutation &inverseScramble, int maxSolSize, bool quiet = false);
 
 #endif
